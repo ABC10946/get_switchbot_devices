@@ -30,3 +30,6 @@ build-linux:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -o $(BINARY_UNIX) -v
 
 .PHONY: build clean test deps build-linux
+
+install:
+	cp $(BINARY_NAME) $(HOME)/.local/bin/$(BINARY_NAME)

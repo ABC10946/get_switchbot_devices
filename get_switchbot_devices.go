@@ -2,16 +2,12 @@ package main
 
 import (
 	"context"
-	"errors"
 	"flag"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/nasa9084/go-switchbot"
-)
-
-var (
-	openToken = flag.String("t", "", "")
 )
 
 func main() {
@@ -22,18 +18,27 @@ func main() {
 }
 
 func execute() error {
-	if *openToken == "" {
-		return errors.New("-t option is required")
-	}
+	openToken := os.Getenv("OPEN_TOKEN")
+	secretToken := os.Getenv("SECRET_TOKEN")
 
-	c := switchbot.New(*openToken)
-	devices, _, err := c.Device().List(context.Background())
+	c := switchbot.New(openToken, secretToken)
+	devices, infrared, err := c.Device().List(context.Background())
 	if err != nil {
 		return fmt.Errorf("gettng device list")
 	}
 
+	fmt.Println("Switchbot Devices")
+
 	for _, device := range devices {
-		fmt.Printf("%s %s\n", device.Name, device.ID)
+		fmt.Printf("%s %s %s\n", device.Type, device.Name, device.ID)
+	}
+
+	fmt.Println("-----------------")
+
+	fmt.Println("Infrared Devices")
+
+	for _, device := range infrared {
+		fmt.Printf("%s %s %s\n", device.Type, device.Name, device.ID)
 	}
 
 	return nil
